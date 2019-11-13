@@ -2,60 +2,69 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Datos climticos</title>
-
-  <!-- update the version number as needed -->
-  <script defer src="/__/firebase/7.3.0/firebase-app.js"></script>
-  <!-- include only the Firebase features as you need -->
-  <script defer src="/__/firebase/7.3.0/firebase-auth.js"></script>
-  <script defer src="/__/firebase/7.3.0/firebase-database.js"></script>
-  <script defer src="/__/firebase/7.3.0/firebase-messaging.js"></script>
-  <script defer src="/__/firebase/7.3.0/firebase-storage.js"></script>
-  <script defer src="/__/firebase/7.3.0/firebase-analytics.js"></script>
-  <!-- initialize the SDK after all desired features are loaded -->
-  <script defer src="/__/firebase/init.js"></script>
-  <!-- Documento de JavaScript donde se manejara la informacion de datos -->
-  <script src="JS/main.js"></script>
-
-  <!-- Hoja de estilo -->
-  <link href="CSS/Estilo.css" rel="stylesheet" type="text/css" media="screen">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Datos climticos</title>
 </head>
 
 <body>
-  <div id="message">
-    <h2>Bienvenido</h2>
-    <h1>Firebase Hosting Setup Complete</h1>
-    <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something
-      extraordinary!</p>
-    <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-  </div>
-  <p id="load">Firebase SDK Loading&hellip;</p>
+    <!-- update the version number as needed 
+    <script defer src="/__/firebase/7.3.0/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need 
+    <script defer src="/__/firebase/7.3.0/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.3.0/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.3.0/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/7.3.0/firebase-storage.js"></script>
+    <script defer src="/__/firebase/7.3.0/firebase-analytics.js"></script>
+   
+    <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-database.js"></script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-      // // The Firebase SDK is initialized and available here!
-      //
-      // firebase.auth().onAuthStateChanged(user => { });
-      // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-      // firebase.messaging().requestPermission().then(() => { });
-      // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-      //
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+     <!-- initialize the SDK after all desired features are loaded 
+     <script defer src="/__/firebase/init.js"></script>-->
 
-      try {
-        let app = firebase.app();
-        let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] ===
-          'function');
-        document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-      } catch (e) {
-        console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-      }
-    });
-  </script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-analytics.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-database.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyCgaY_dxaX2RfqMPXcgzdsg0XthF94aYX4",
+            authDomain: "datos-climaticos-f76b2.firebaseapp.com",
+            databaseURL: "https://datos-climaticos-f76b2.firebaseio.com",
+            projectId: "datos-climaticos-f76b2",
+            storageBucket: "datos-climaticos-f76b2.appspot.com",
+            messagingSenderId: "328572715982",
+            appId: "1:328572715982:web:22c4d50b22004363d2619f",
+            measurementId: "G-T9FXW8V8ES"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+
+        function writeUserData() {
+            const indi = firebase.database().ref('Emilio/IndiceUlt');
+
+            for (i = 1; i < 10; i++) {
+                const ref = firebase.database().ref('Emilio/' + i);
+                ref.on('value', (snapshot) => {
+                    const value = {
+                        Aire: snapshot.val().Aire_PPM_,
+                        Temperatura: snapshot.val().Tempe_Celsius_,
+                        Humedad: snapshot.val().Hum_Porcentaje_,
+                        Indice_de_calor: snapshot.val().indice_de_calor_Celsius_
+                    };
+                    alert(i+"\n" + value.Aire + "\n" + value.Humedad + "\n" + value.Temperatura + "\n" + value
+                        .Indice_de_calor);
+
+                });
+            }
+        }
+        writeUserData();
+    </script>
 </body>
 
 </html>
