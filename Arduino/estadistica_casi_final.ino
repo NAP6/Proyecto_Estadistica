@@ -1,8 +1,11 @@
-#include <ESP8266WiFi.h>
+#include <ESP8266WiFi.h>  //librería necesaria para la conexión wifi
 #include <FirebaseArduino.h>
 #include <DHT.h>    // importa la Librerias DHT
 #include <DHT_U.h>
 #include <string>
+#include <NTPClient.h>  //importamos la librería del cliente NTP
+#include <WiFiUdp.h> // importamos librería UDP para comunicar con 
+                     // NTP
 
 using namespace std;
 
@@ -12,6 +15,8 @@ float HUMEDAD;
 DHT dht(SENSOR, DHT11);   
 int n = 0;
 String pos="";
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "0.south-america.pool.ntp.org",-10800,6000);
 
 #define FIREBASE_HOST "datos-climaticos-f76b2.firebaseio.com"
 #define FIREBASE_AUTH "oRm8dWIa9c6wa1wiOi8oR9EWlvasmIbGuTutDMVF"
@@ -27,6 +32,14 @@ void ingreso(String s, float val){
   if(Firebase.failed()){
     reconectando();
     ingreso(s,val);
+  }
+}
+
+void ingresoHora(String s, String val){
+  Firebase.setString(s,val);
+  if(Firebase.failed()){
+    reconectando();
+    ingresoHora(s,val);
   }
 }
 
@@ -69,6 +82,7 @@ void setup() {
   pinMode(2, OUTPUT);
   digitalWrite(2,HIGH);
   reconectando();
+  timeClient.begin();
 }
 
 //  Funcion loop, se repite infinitamente
@@ -79,8 +93,10 @@ void loop() {
   float t = dht.readTemperature(); //Leemos la temperatura en grados Celsius
   float a = analogRead(A0);
   float idc = dht.computeHeatIndex(t, h, false);
+  timeClient.update();
 
   //------------  Muestra los datos en el monitor serial -------------
+  /*
   Serial.println("------------ CAPTURA ------------");
   Serial.print("Humedad: ");
   Serial.println(h);
@@ -90,6 +106,7 @@ void loop() {
   Serial.println(a);
   Serial.print("Sensacion termica: ");
   Serial.println(idc);
+  */
 
   //--------- Recupera el ultmo indice y lo incrementa -------
   get_n();
@@ -102,6 +119,8 @@ void loop() {
   ingreso("Nicolas/"+pos+"/Hum(Porcentaje)", h);
   ingreso("Nicolas/"+pos+"/Indice de calor(Celsius)", idc);
   ingreso("Nicolas/"+pos+"/Aire(PPM)",a);
+  ingresoHora("Tiempo/Hora",timeClient.getFormattedTime());
+  ingreso("Tiempo/Dia",timeClient.getDay());
 
   Serial.println("------------ Termino de subir ------------");
   
