@@ -8,20 +8,6 @@
 </head>
 
 <body>
-    <!-- update the version number as needed 
-    <script defer src="/__/firebase/7.3.0/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need 
-    <script defer src="/__/firebase/7.3.0/firebase-auth.js"></script>
-    <script defer src="/__/firebase/7.3.0/firebase-database.js"></script>
-    <script defer src="/__/firebase/7.3.0/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/7.3.0/firebase-storage.js"></script>
-    <script defer src="/__/firebase/7.3.0/firebase-analytics.js"></script>
-   
-    <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-database.js"></script>
-
-     <!-- initialize the SDK after all desired features are loaded 
-     <script defer src="/__/firebase/init.js"></script>-->
-
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
 
@@ -30,41 +16,8 @@
     <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-analytics.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-database.js"></script>
-    <script>
-        var firebaseConfig = {
-            apiKey: "AIzaSyCgaY_dxaX2RfqMPXcgzdsg0XthF94aYX4",
-            authDomain: "datos-climaticos-f76b2.firebaseapp.com",
-            databaseURL: "https://datos-climaticos-f76b2.firebaseio.com",
-            projectId: "datos-climaticos-f76b2",
-            storageBucket: "datos-climaticos-f76b2.appspot.com",
-            messagingSenderId: "328572715982",
-            appId: "1:328572715982:web:22c4d50b22004363d2619f",
-            measurementId: "G-T9FXW8V8ES"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
 
-        function writeUserData() {
-            const indi = firebase.database().ref('Emilio/IndiceUlt');
-
-            for (i = 1; i < 10; i++) {
-                const ref = firebase.database().ref('Emilio/' + i);
-                ref.on('value', (snapshot) => {
-                    const value = {
-                        Aire: snapshot.val().Aire_PPM_,
-                        Temperatura: snapshot.val().Tempe_Celsius_,
-                        Humedad: snapshot.val().Hum_Porcentaje_,
-                        Indice_de_calor: snapshot.val().indice_de_calor_Celsius_
-                    };
-                    alert(i+"\n" + value.Aire + "\n" + value.Humedad + "\n" + value.Temperatura + "\n" + value
-                        .Indice_de_calor);
-
-                });
-            }
-        }
-        writeUserData();
-    </script>
+    <script src="JS/main.js"></script>
 </body>
 
 </html>
