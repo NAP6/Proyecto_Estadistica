@@ -35,9 +35,9 @@ function writeUserData() {
 }
 
 function myFunction() {
-    var d = new Date(1573700000);
+    var d = new Date(18000+1573723000*1000);
     var n = d.toString();
     alert(n);
 }
-myFunction();
+//myFunction();
 //writeUserData();
