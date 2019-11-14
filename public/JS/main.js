@@ -12,6 +12,9 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
+
+
+
 function writeUserData() {
     const indi = firebase.database().ref('Emilio/IndiceUlt');
 
@@ -30,4 +33,11 @@ function writeUserData() {
         });
     }
 }
-writeUserData();
+
+function myFunction() {
+    var d = new Date(1573700000);
+    var n = d.toString();
+    alert(n);
+}
+myFunction();
+//writeUserData();

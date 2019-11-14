@@ -16,12 +16,13 @@ DHT dht(SENSOR, DHT11);
 int n = 0;
 String pos="";
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "0.south-america.pool.ntp.org",-10800,6000);
+NTPClient timeClient(ntpUDP, "0.south-america.pool.ntp.org",-18000,6000);
 
 #define FIREBASE_HOST "datos-climaticos-f76b2.firebaseio.com"
 #define FIREBASE_AUTH "oRm8dWIa9c6wa1wiOi8oR9EWlvasmIbGuTutDMVF"
 #define WIFI_SSID "Alvamoli2"
 #define WIFI_PASSWORD "famonidoma500"
+String nombre="Nicolas";
 
 
 //#################################### FUNCIONES SECUNTAREAS ####################################
@@ -66,7 +67,7 @@ void reconectando(){
 
 //------- Recupera el valor de el ultimo indice ------------
 void get_n() {
-  n = Firebase.getFloat("Nicolas/IndiceUlt");
+  n = Firebase.getFloat("Cantidad_Dat/Indice"+nombre);
   Serial.println(n);
   if(n == 0){
     Serial.println("n es igual a 0");
@@ -88,6 +89,8 @@ void setup() {
 //  Funcion loop, se repite infinitamente
 void loop() {
 
+  while(Firebase.getInt("Bandera_Inicio") != 1){}
+  
   //------------  Captura los datos -----------
   float h = dht.readHumidity(); //Leemos la Humedad
   float t = dht.readTemperature(); //Leemos la temperatura en grados Celsius
@@ -96,7 +99,7 @@ void loop() {
   timeClient.update();
 
   //------------  Muestra los datos en el monitor serial -------------
-  /*
+  
   Serial.println("------------ CAPTURA ------------");
   Serial.print("Humedad: ");
   Serial.println(h);
@@ -106,7 +109,12 @@ void loop() {
   Serial.println(a);
   Serial.print("Sensacion termica: ");
   Serial.println(idc);
-  */
+  Serial.print("Hora: ");
+  Serial.println(timeClient.getFormattedTime());
+  Serial.print("Dia: ");
+  Serial.println(timeClient.getDay());
+  Serial.print("Segundos transcurridos desde el 1 de enero de 1970: ");
+  Serial.println(timeClient.getEpochTime());
 
   //--------- Recupera el ultmo indice y lo incrementa -------
   get_n();
@@ -114,15 +122,16 @@ void loop() {
   pos= String(n);
 
   //-------- sube los datos a firebase -------------
-  ingreso("Nicolas/IndiceUlt",n);
-  ingreso("Nicolas/"+pos+"/Tempe(Celsius)", t);
-  ingreso("Nicolas/"+pos+"/Hum(Porcentaje)", h);
-  ingreso("Nicolas/"+pos+"/Indice de calor(Celsius)", idc);
-  ingreso("Nicolas/"+pos+"/Aire(PPM)",a);
-  ingresoHora("Tiempo/Hora",timeClient.getFormattedTime());
-  ingreso("Tiempo/Dia",timeClient.getDay());
+  ingreso("Cantidad_Dat/Indice"+nombre,n);
+  ingreso("Datos/"+nombre+"/"+pos+"/Temperatura_C", t);
+  ingreso("Datos/"+nombre+"/"+pos+"/Humedad_por", h);
+  ingreso("Datos/"+nombre+"/"+pos+"/Sensacion_Termica", idc);
+  ingreso("Datos/"+nombre+"/"+pos+"/Monoxido_Carbono_PPM_",a);
+  ingresoHora("Datos/"+nombre+"/"+pos+"/Hora",timeClient.getFormattedTime());
+  ingreso("Datos/"+nombre+"/"+pos+"/Dia_Semana",timeClient.getDay());
+  ingreso("Datos/"+nombre+"/"+pos+"/Tiempo",timeClient.getEpochTime());
 
   Serial.println("------------ Termino de subir ------------");
-  
+
   delay(60000);
 }
