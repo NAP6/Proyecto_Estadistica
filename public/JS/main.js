@@ -13,22 +13,46 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 // #########################################################################
 
+//Carga los valores al arreglo
+ArrNico=new Array();
+function carga() {
+    const indi = firebase.database().ref('Cantidad_Dat');
+    indi.on('value', (snapshot) => {
+        pos = snapshot.val().IndiceNicolas
+        for (i = 0; i < pos; i++) {
+            getData('Nicolas',pos);
+            ArrNico[i]=value
+            console.log(ArrNico[i])
+        }
+    });
+}
+carga();
+
+//Recupera informacion de la base de datos
+var value;
+function getData(nombre, pos) {
+    const dat = firebase.database().ref('Datos/' + nombre + '/' + pos);
+    dat.on('value', (snapshot) => {
+        value = new Dato(
+            snapshot.val().Humedad_por,
+            snapshot.val().Monoxido_Carbono_PPM_,
+            snapshot.val().Sensacion_Termica,
+            snapshot.val().Temperatura_C,
+            snapshot.val().Tiempo
+        );
+    });
+}
+
 //Cambia el valor de los datos en tiempo real
 const indi = firebase.database().ref('Cantidad_Dat');
 indi.on('value', (snapshot) => {
     pos = snapshot.val().IndiceNicolas
-    const dat = firebase.database().ref('Datos/Nicolas/' + pos);
-    dat.on('value', (snapshot) => {
-        const value = {
-            Aire: snapshot.val().Monoxido_Carbono_PPM_,
-            Temperatura: snapshot.val().Temperatura_C,
-            Humedad: snapshot.val().Humedad_por,
-        };
-        document.getElementById("temperatura_R").innerHTML = value.Temperatura;
-        document.getElementById("humedad_R").innerHTML = value.Humedad;
-        document.getElementById("co_R").innerHTML = value.Aire;
-    });
+    getData('Nicolas', pos);
+    document.getElementById("temperatura_R").innerHTML = value.getTemperatura();
+    document.getElementById("humedad_R").innerHTML = value.getHumedad();
+    document.getElementById("co_R").innerHTML = value.getCO();
 });
+
 
 /*
 function myFunction() {
@@ -37,3 +61,45 @@ function myFunction() {
     alert(n);
 }
 myFunction();*/
+
+
+class Dato {
+    constructor(hum, co, sensTer, tempe, time) {
+        this.humedad = hum;
+        this.co = co;
+        this.Sensacio_Termica = sensTer;
+        this.temperatura = tempe;
+        this.time = time;
+    }
+
+    getHumedad() {
+        return this.humedad;
+    }
+
+    getCO() {
+        return this.co;
+    }
+
+    getSensacion_Termica() {
+        return this.Sensacio_Termica;
+    }
+
+    getTemperatura() {
+        return this.temperatura;
+    }
+
+    getTime() {
+        return this.time;
+    }
+}
+
+class Lista {
+
+    constructor() {
+        lis = new Array();
+    }
+
+    add(d) {
+        lis.push(d);
+    }
+}
