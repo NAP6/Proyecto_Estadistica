@@ -28,7 +28,7 @@ String nombre="Nicolas";
 //#################################### FUNCIONES SECUNTAREAS ####################################
 
 //-------- Ingresa los datos en el path "s" (Funcion recursiva para verificar que se ingresen los datos) ----------
-void ingreso(String s, float val){
+void ingreso(String s, float val){Serial.println("INGRESO");
   Firebase.setFloat(s,val);
   if(Firebase.failed()){
     reconectando();
@@ -61,17 +61,16 @@ void reconectando(){
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   
   digitalWrite(2,HIGH);
-
-  get_n();
 }
 
 //------- Recupera el valor de el ultimo indice ------------
-void get_n() {
+void get_n() { 
   n = Firebase.getFloat("Cantidad_Dat/Indice"+nombre);
   Serial.println(n);
   if(n == 0){
     Serial.println("n es igual a 0");
     reconectando();
+    get_n();
   }
 }
 
@@ -122,7 +121,6 @@ void loop() {
   pos= String(n);
 
   //-------- sube los datos a firebase -------------
-  ingreso("Cantidad_Dat/Indice"+nombre,n);
   ingreso("Datos/"+nombre+"/"+pos+"/Temperatura_C", t);
   ingreso("Datos/"+nombre+"/"+pos+"/Humedad_por", h);
   ingreso("Datos/"+nombre+"/"+pos+"/Sensacion_Termica", idc);
@@ -130,6 +128,7 @@ void loop() {
   ingresoHora("Datos/"+nombre+"/"+pos+"/Hora",timeClient.getFormattedTime());
   ingreso("Datos/"+nombre+"/"+pos+"/Dia_Semana",timeClient.getDay());
   ingreso("Datos/"+nombre+"/"+pos+"/Tiempo",timeClient.getEpochTime());
+  ingreso("Cantidad_Dat/Indice"+nombre,n);
 
   Serial.println("------------ Termino de subir ------------");
 
