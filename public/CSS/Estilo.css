@@ -78,6 +78,27 @@ body {
     width: 33.3%;
 }
 
+header{
+    border-bottom-style: groove;
+    border-bottom-color: rgba(70, 70, 70, 0.164);
+    background: white;
+    padding: 0%;
+    position: sticky;
+    top: 0px;
+}
+
+article {
+    padding: 0px;
+    margin: 0px;
+}
+
+footer {
+    background: white;
+}
+
+
+
+
 @media (max-width: 600px) {
     body,
     .cuadro {
