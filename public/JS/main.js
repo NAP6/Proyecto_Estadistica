@@ -1,3 +1,4 @@
+// Initialize Firebase
 var firebaseConfig = {
     apiKey: "AIzaSyCgaY_dxaX2RfqMPXcgzdsg0XthF94aYX4",
     authDomain: "datos-climaticos-f76b2.firebaseapp.com",
@@ -8,13 +9,13 @@ var firebaseConfig = {
     appId: "1:328572715982:web:22c4d50b22004363d2619f",
     measurementId: "G-T9FXW8V8ES"
 };
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 // #########################################################################
-var nombre = 'Nicolas';
-var aux =false;
+// #########################################################################
 
+var nombre = 'Nicolas';
+var aux = false;
 //Cambia el valor de los datos en tiempo real
 const indi = firebase.database().ref('Cantidad_Dat');
 indi.on('value', (snapshot) => {
@@ -32,14 +33,18 @@ indi.on('value', (snapshot) => {
         document.getElementById("humedad_R").innerHTML = value.getHumedad();
         document.getElementById("co_R").innerHTML = value.getCO();
         ArrNico[pos - 2] = value;
-        if(aux){
+        if (aux) {
             mostrar();
         }
     });
 });
 
+// #########################################################################
+// #########################################################################
+
 //Carga los valores al arreglo
 ArrNico = new Array();
+
 function carga() {
     const indi = firebase.database().ref('Cantidad_Dat');
     indi.once('value', (snapshot) => {
@@ -51,6 +56,7 @@ function carga() {
 }
 carga();
 
+//Auxiliar temporal para mostrar los datos
 function mostrar() {
     let txt = "<pre style=\"font-size: 25px;\">Indice  Temperatura Humedad CO</pre></br>";
     for (i = 0; i < ArrNico.length; i++) {
@@ -73,20 +79,12 @@ function getData(nombre, pos, fin) {
         ArrNico[pos - 2] = value;
         if (pos >= fin - 1) {
             mostrar();
-            aux=true;
+            aux = true;
         }
     });
 }
 
-/*
-function myFunction() {
-    var d = new Date(18000 + 1573723000 * 1000);
-    var n = d.toString();
-    alert(n);
-}
-myFunction();*/
-
-
+// Clase usada ara manerar los datos
 class Dato {
     constructor(hum, co, sensTer, tempe, time) {
         this.humedad = hum;
@@ -116,3 +114,69 @@ class Dato {
         return this.time;
     }
 }
+
+// #########################################################################
+// #########################################################################
+//Graficas de frecuencia del inicio
+google.charts.load('current', {
+    'packages': ['corechart']
+});
+
+google.charts.setOnLoadCallback(dibujarTemperatura);
+google.charts.setOnLoadCallback(dibujarHumedad);
+google.charts.setOnLoadCallback(dibujarCO);
+
+var tem_F = [
+    ["Rango", "Frecuencia"]
+
+];
+var hum_F = [
+    ["Rango", "Frecuencia"]
+
+];
+var co_F = [
+    ["Rango", "Frecuencia"]
+
+];
+
+var options = {
+    title: "No se cargo el titulo",
+    height: 400,
+    bar: {
+        groupWidth: "95%"
+    },
+    legend: {
+        position: "none"
+    }
+};
+
+function dibujarTemperatura() {
+    var data = google.visualization.arrayToDataTable(tem_F);
+
+    var view = new google.visualization.DataView(data);
+    options['title'] = "Temperatura";
+    var chart = new google.visualization.ColumnChart(document.getElementById("temperatura_G"));
+    chart.draw(view, options);
+}
+
+function dibujarHumedad() {
+    var data = google.visualization.arrayToDataTable(hum_F);
+
+    var view = new google.visualization.DataView(data);
+    options['title'] = "Humedad";
+    var chart = new google.visualization.ColumnChart(document.getElementById("humedad_G"));
+    chart.draw(view, options);
+}
+
+function dibujarCO() {
+    var data = google.visualization.arrayToDataTable(co_F);
+
+    var view = new google.visualization.DataView(data);
+    options['title'] = "Monoxido de Carbono";
+    var chart = new google.visualization.ColumnChart(document.getElementById("co_G"));
+    chart.draw(view, options);
+}
+
+// #########################################################################
+// #########################################################################
+
