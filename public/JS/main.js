@@ -11,33 +11,108 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
+// #########################################################################
+var nombre = 'Nicolas';
+var aux =false;
 
+//Cambia el valor de los datos en tiempo real
+const indi = firebase.database().ref('Cantidad_Dat');
+indi.on('value', (snapshot) => {
+    pos = snapshot.val().IndiceNicolas
+    const dat = firebase.database().ref('Datos/' + nombre + '/' + pos);
+    dat.on('value', (snapshot) => {
+        const value = new Dato(
+            snapshot.val().Humedad_por,
+            snapshot.val().Monoxido_Carbono_PPM_,
+            snapshot.val().Sensacion_Termica,
+            snapshot.val().Temperatura_C,
+            snapshot.val().Tiempo
+        );
+        document.getElementById("temperatura_R").innerHTML = value.getTemperatura();
+        document.getElementById("humedad_R").innerHTML = value.getHumedad();
+        document.getElementById("co_R").innerHTML = value.getCO();
+        ArrNico[pos - 2] = value;
+        if(aux){
+            mostrar();
+        }
+    });
+});
 
+//Carga los valores al arreglo
+ArrNico = new Array();
+function carga() {
+    const indi = firebase.database().ref('Cantidad_Dat');
+    indi.once('value', (snapshot) => {
+        pos = snapshot.val().IndiceNicolas;
+        for (i = 2; i < pos; i++) {
+            getData(nombre, i, pos);
+        }
+    });
+}
+carga();
 
-
-function writeUserData() {
-    const indi = firebase.database().ref('Emilio/IndiceUlt');
-
-    for (i = 1; i < 10; i++) {
-        const ref = firebase.database().ref('Emilio/' + i);
-        ref.on('value', (snapshot) => {
-            const value = {
-                Aire: snapshot.val().Aire_PPM_,
-                Temperatura: snapshot.val().Tempe_Celsius_,
-                Humedad: snapshot.val().Hum_Porcentaje_,
-                Indice_de_calor: snapshot.val().indice_de_calor_Celsius_
-            };
-            alert(i+"\n" + value.Aire + "\n" + value.Humedad + "\n" + value.Temperatura + "\n" + value
-                .Indice_de_calor);
-
-        });
+function mostrar() {
+    let txt = "<pre style=\"font-size: 25px;\">Indice  Temperatura Humedad CO</pre></br>";
+    for (i = 0; i < ArrNico.length; i++) {
+        txt += "<pre style=\"font-size: 25px;\">" + i + "    " + ArrNico[i].getTemperatura() + "    " + ArrNico[i].getHumedad() + "    " + ArrNico[i].getCO() + "</pre></br>";
     }
+    document.getElementById("Lista").innerHTML = txt;
 }
 
+//Recupera informacion de la base de datos
+function getData(nombre, pos, fin) {
+    const dat = firebase.database().ref('Datos/' + nombre + '/' + pos);
+    dat.once('value', (snapshot) => {
+        let value = new Dato(
+            snapshot.val().Humedad_por,
+            snapshot.val().Monoxido_Carbono_PPM_,
+            snapshot.val().Sensacion_Termica,
+            snapshot.val().Temperatura_C,
+            snapshot.val().Tiempo
+        );
+        ArrNico[pos - 2] = value;
+        if (pos >= fin - 1) {
+            mostrar();
+            aux=true;
+        }
+    });
+}
+
+/*
 function myFunction() {
-    var d = new Date(18000+1573812000*1000);
+    var d = new Date(18000 + 1573723000 * 1000);
     var n = d.toString();
     alert(n);
 }
-myFunction();
-//writeUserData();
+myFunction();*/
+
+
+class Dato {
+    constructor(hum, co, sensTer, tempe, time) {
+        this.humedad = hum;
+        this.co = co;
+        this.Sensacio_Termica = sensTer;
+        this.temperatura = tempe;
+        this.time = time;
+    }
+
+    getHumedad() {
+        return this.humedad;
+    }
+
+    getCO() {
+        return this.co;
+    }
+
+    getSensacion_Termica() {
+        return this.Sensacio_Termica;
+    }
+
+    getTemperatura() {
+        return this.temperatura;
+    }
+
+    getTime() {
+        return this.time;
+    }
+}
