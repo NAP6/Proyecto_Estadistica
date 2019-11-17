@@ -139,6 +139,14 @@ var co_F = [
 
 ];
 
+var tit = ['Cosa 1', 'Cosa 2', 'Cosa 3'];
+var elem = [5, 10, 6];
+for (i = 0; i < tit.length; i++) {
+    tem_F[i + 1] = [tit[i], elem[i]];
+    hum_F[i + 1] = [tit[i], elem[i]];
+    co_F[i + 1] = [tit[i], elem[i]];
+}
+
 var options = {
     title: "No se cargo el titulo",
     height: 400,
@@ -179,4 +187,3 @@ function dibujarCO() {
 
 // #########################################################################
 // #########################################################################
-
