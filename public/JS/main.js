@@ -58,11 +58,7 @@ carga();
 
 //Auxiliar temporal para mostrar los datos
 function mostrar() {
-    let txt = "<pre style=\"font-size: 25px;\">Indice  Temperatura Humedad CO</pre></br>";
-    for (i = 0; i < ArrNico.length; i++) {
-        txt += "<pre style=\"font-size: 25px;\">" + i + "    " + ArrNico[i].getTemperatura() + "    " + ArrNico[i].getHumedad() + "    " + ArrNico[i].getCO() + "</pre></br>";
-    }
-    document.getElementById("Lista").innerHTML = txt;
+    frecuencia('temperatura')
 }
 
 //Recupera informacion de la base de datos
