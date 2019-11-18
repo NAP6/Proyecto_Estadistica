@@ -28,22 +28,13 @@ String nombre="Nicolas";
 //#################################### FUNCIONES SECUNTAREAS ####################################
 
 //-------- Ingresa los datos en el path "s" (Funcion recursiva para verificar que se ingresen los datos) ----------
-void ingreso(String s, float val){Serial.println("INGRESO");
+void ingreso(String s, float val){
   Firebase.setFloat(s,val);
   if(Firebase.failed()){
     reconectando();
     ingreso(s,val);
   }
 }
-
-void ingresoHora(String s, String val){
-  Firebase.setString(s,val);
-  if(Firebase.failed()){
-    reconectando();
-    ingresoHora(s,val);
-  }
-}
-
 //-------  Se conecta y reconecta con el internet, y verifica que haya comunicacion con la base de datos -------
 void reconectando(){
   digitalWrite(2,LOW);
@@ -110,8 +101,8 @@ void loop() {
   Serial.println(idc);
   Serial.print("Hora: ");
   Serial.println(timeClient.getFormattedTime());
-  Serial.print("Dia: ");
-  Serial.println(timeClient.getDay());
+  Serial.print("Hora: ");
+  Serial.println(timeClient.getHours());
   Serial.print("Segundos transcurridos desde el 1 de enero de 1970: ");
   Serial.println(timeClient.getEpochTime());
 
@@ -125,7 +116,9 @@ void loop() {
   ingreso("Datos/"+nombre+"/"+pos+"/Humedad_por", h);
   ingreso("Datos/"+nombre+"/"+pos+"/Sensacion_Termica", idc);
   ingreso("Datos/"+nombre+"/"+pos+"/Monoxido_Carbono_PPM_",a);
-  ingresoHora("Datos/"+nombre+"/"+pos+"/Hora",timeClient.getFormattedTime());
+  ingreso("Datos/"+nombre+"/"+pos+"/Hora",timeClient.getHours());
+  ingreso("Datos/"+nombre+"/"+pos+"/Minutos",timeClient.getMinutes());
+  ingreso("Datos/"+nombre+"/"+pos+"/Segundos",timeClient.getSeconds());
   ingreso("Datos/"+nombre+"/"+pos+"/Dia_Semana",timeClient.getDay());
   ingreso("Datos/"+nombre+"/"+pos+"/Tiempo",timeClient.getEpochTime());
   ingreso("Cantidad_Dat/Indice"+nombre,n);
