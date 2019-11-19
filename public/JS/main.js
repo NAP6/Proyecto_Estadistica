@@ -27,14 +27,20 @@ indi.on('value', (snapshot) => {
             snapshot.val().Monoxido_Carbono_PPM_,
             snapshot.val().Sensacion_Termica,
             snapshot.val().Temperatura_C,
-            snapshot.val().Tiempo
+            snapshot.val().Hora,
+            snapshot.val().Minutos
         );
-        document.getElementById("temperatura_R").innerHTML = value.getTemperatura();
-        document.getElementById("humedad_R").innerHTML = value.getHumedad();
-        document.getElementById("co_R").innerHTML = value.getCO();
+        document.getElementById("temperatura_R").innerHTML = value.temperatura;
+        document.getElementById("humedad_R").innerHTML = value.humedad;
+        document.getElementById("co_R").innerHTML = value.co;
         ArrNico[pos - 2] = value;
         if (aux) {
-            mostrar();
+            tem_F = frecuencia('temperatura');
+            hum_F = frecuencia('humedad');
+            co_F = frecuencia('co');
+            graficar();
+            frec_h = frecuenciaH();
+            graficar2();
         }
     });
 });
@@ -56,11 +62,6 @@ function carga() {
 }
 carga();
 
-//Auxiliar temporal para mostrar los datos
-function mostrar() {
-    frecuencia('temperatura')
-}
-
 //Recupera informacion de la base de datos
 function getData(nombre, pos, fin) {
     const dat = firebase.database().ref('Datos/' + nombre + '/' + pos);
@@ -70,44 +71,30 @@ function getData(nombre, pos, fin) {
             snapshot.val().Monoxido_Carbono_PPM_,
             snapshot.val().Sensacion_Termica,
             snapshot.val().Temperatura_C,
-            snapshot.val().Tiempo
+            snapshot.val().Hora,
+            snapshot.val().Minutos
         );
         ArrNico[pos - 2] = value;
         if (pos >= fin - 1) {
-            mostrar();
-            aux = true;
+            tem_F = frecuencia('temperatura');
+            hum_F = frecuencia('humedad');
+            co_F = frecuencia('co');
+            graficar();
+            frec_h = frecuenciaH();
+            graficar2();
         }
     });
 }
 
 // Clase usada ara manerar los datos
 class Dato {
-    constructor(hum, co, sensTer, tempe, time) {
+    constructor(hum, co, sensTer, tempe, h, m) {
         this.humedad = hum;
         this.co = co;
         this.Sensacio_Termica = sensTer;
         this.temperatura = tempe;
-        this.time = time;
-    }
-
-    getHumedad() {
-        return this.humedad;
-    }
-
-    getCO() {
-        return this.co;
-    }
-
-    getSensacion_Termica() {
-        return this.Sensacio_Termica;
-    }
-
-    getTemperatura() {
-        return this.temperatura;
-    }
-
-    getTime() {
-        return this.time;
+        this.h = h;
+        this.m = m;
     }
 }
 
@@ -118,29 +105,19 @@ google.charts.load('current', {
     'packages': ['corechart']
 });
 
-google.charts.setOnLoadCallback(dibujarTemperatura);
-google.charts.setOnLoadCallback(dibujarHumedad);
-google.charts.setOnLoadCallback(dibujarCO);
+function graficar() {
+    google.charts.setOnLoadCallback(dibujarTemperatura);
+    google.charts.setOnLoadCallback(dibujarHumedad);
+    google.charts.setOnLoadCallback(dibujarCO);
+}
+var tem_F;
+var hum_F;
+var co_F;
+var frec_h;
 
-var tem_F = [
-    ["Rango", "Frecuencia"]
-
-];
-var hum_F = [
-    ["Rango", "Frecuencia"]
-
-];
-var co_F = [
-    ["Rango", "Frecuencia"]
-
-];
-
-var tit = ['Cosa 1', 'Cosa 2', 'Cosa 3'];
-var elem = [5, 10, 6];
-for (i = 0; i < tit.length; i++) {
-    tem_F[i + 1] = [tit[i], elem[i]];
-    hum_F[i + 1] = [tit[i], elem[i]];
-    co_F[i + 1] = [tit[i], elem[i]];
+function graficar2() {
+    console.log(frec_h)
+    google.charts.setOnLoadCallback(dibujarHora);
 }
 
 var options = {
@@ -181,5 +158,17 @@ function dibujarCO() {
     chart.draw(view, options);
 }
 
+function dibujarHora() {
+    var data = google.visualization.arrayToDataTable(frec_h);
+
+    var options = {
+        title: 'Gafica de medias, en torno a la hora del dia',
+        legend: { position: 'top', maxLines: 3 },
+        hAxis: { title: 'Hora del dia', titleTextStyle: { color: '#333' } },
+        vAxis: { minValue: 0 }
+    };
+    var chart = new google.visualization.AreaChart(document.getElementById('hora_f'));
+    chart.draw(data, options);
+}
 // #########################################################################
 // #########################################################################

@@ -1,55 +1,69 @@
 function frecuencia(val) {
     let t = ArrNico.length;
-    console.log("Total: " + t)
     let k = 0;
     while (Math.pow(2, k) < t) {
         k++;
     }
-    console.log("Cantidad de clases: " + k)
     let max = ArrNico[0][val];
     let min = ArrNico[0][val];
-    for (i = 0; i < t; i++) {
+    for (i = 1; i < t; i++) {
         max = Math.max(max, ArrNico[i][val]);
-        min = Math.min(max, ArrNico[i][val]);
+        min = Math.min(min, ArrNico[i][val]);
     }
-    console.log("Menor: " + min + "   Mayor: " + max)
     var intervalo = Math.round((max - min) / k);
-    console.log("Intervalo: " + intervalo)
     var frec = new Array(k);
     for (i = 0; i < k; i++) {
         frec[i] = 0;
     }
     min = Math.round(min) - 1;
     for (i = 0; i < t; i++) {
-        let band = false;
         for (j = 0; j < k; j++) {
-            if (ArrNico[i][val] > (min + intervalo * j) && ArrNico[i][val] <= (min + intervalo * j + 1)) {
+            if (ArrNico[i][val] > (min + intervalo * j) && ArrNico[i][val] <= (min + intervalo * (j + 1))) {
                 frec[j]++;
-                band = true;
-            }
-        }
-        if (!band) {
-            console.log('No:    ' + ArrNico[i][val])
-            for (j = 0; j < k; j++) {
-                console.log('')
-                console.log("" + (min + intervalo * j) + ":" + (min + intervalo * j + 1))
-                if (ArrNico[i][val] > (min + intervalo * j) && ArrNico[i][val] <= (min + intervalo * j + 1)) {
-                    console.log('entra')
-                } else {
-                    console.log('no entra')
-                }
             }
         }
     }
     let s = "";
     let aux = 0;
+    let res = [
+        ["Rango", "Frecuencia"]
+    ];
     for (j = 0; j < k; j++) {
-        s = "" + (min + intervalo * j) + ":" + (min + intervalo * j + 1);
+        s = "" + (min + intervalo * j) + ":" + (min + intervalo * (j + 1));
         aux += frec[j];
-        frec[j] = [s, frec[j]];
-        console.log(frec[j])
+        res[j + 1] = [s, frec[j]];
     }
-    console.log('total sumados: ' + aux)
-    console.log('')
-        //document.getElementById("Lista").innerHTML = txt;
+    return res;
+}
+
+function frecuenciaH() {
+    let res = new Array();
+    let s = "";
+    for (i = 0; i < 24; i++) {
+        res[i] = new Array();
+        res[i]['t'] = 0;
+        res[i]['h'] = 0;
+        res[i]['c'] = 0;
+        res[i]['sen'] = 0;
+        res[i]['div'] = 0;
+    }
+    for (i = 0; i < ArrNico.length; i++) {
+        res[ArrNico[i]['h']]['t'] += ArrNico[i]['temperatura'];
+        res[ArrNico[i]['h']]['h'] += ArrNico[i]['humedad'];
+        res[ArrNico[i]['h']]['c'] += ArrNico[i]['co'];
+        res[ArrNico[i]['h']]['sen'] += ArrNico[i]['Sensacio_Termica'];
+        res[ArrNico[i]['h']]['div']++;
+    }
+    let aux = [
+        ['Hora', 'Temperatura', 'Humedad', 'CO', 'sensacion termica']
+    ];
+    for (i = 0; i < res.length; i++) {
+        aux.push([i,
+            (res[i]['t'] / res[i]['div']),
+            (res[i]['h'] / res[i]['div']),
+            (res[i]['c'] / res[i]['div']),
+            (res[i]['sen'] / res[i]['div'])
+        ]);
+    }
+    return aux;
 }
