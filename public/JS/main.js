@@ -28,7 +28,7 @@ indi.on('value', (snapshot) => {
             snapshot.val().Sensacion_Termica,
             snapshot.val().Temperatura_C,
             snapshot.val().Hora,
-            snapshot.val().Minutos
+            snapshot.val().Dia_Semana
         );
         document.getElementById("temperatura_R").innerHTML = value.temperatura;
         document.getElementById("humedad_R").innerHTML = value.humedad;
@@ -39,7 +39,8 @@ indi.on('value', (snapshot) => {
             hum_F = frecuencia('humedad');
             co_F = frecuencia('co');
             graficar();
-            frec_h = frecuenciaH();
+            frec_h = frecuenciaH('h', 24);
+            frec_d = frecuenciaH('d', 7);
             graficar2();
         }
     });
@@ -72,7 +73,7 @@ function getData(nombre, pos, fin) {
             snapshot.val().Sensacion_Termica,
             snapshot.val().Temperatura_C,
             snapshot.val().Hora,
-            snapshot.val().Minutos
+            snapshot.val().Dia_Semana
         );
         ArrNico[pos - 2] = value;
         if (pos >= fin - 1) {
@@ -80,7 +81,8 @@ function getData(nombre, pos, fin) {
             hum_F = frecuencia('humedad');
             co_F = frecuencia('co');
             graficar();
-            frec_h = frecuenciaH();
+            frec_h = frecuenciaH('h', 24);
+            frec_d = frecuenciaH('d', 7);
             graficar2();
         }
     });
@@ -88,13 +90,13 @@ function getData(nombre, pos, fin) {
 
 // Clase usada ara manerar los datos
 class Dato {
-    constructor(hum, co, sensTer, tempe, h, m) {
+    constructor(hum, co, sensTer, tempe, h, d) {
         this.humedad = hum;
         this.co = co;
         this.Sensacio_Termica = sensTer;
         this.temperatura = tempe;
         this.h = h;
-        this.m = m;
+        this.d = d;
     }
 }
 
@@ -118,10 +120,10 @@ var frec_h;
 function graficar2() {
     console.log(frec_h)
     google.charts.setOnLoadCallback(dibujarHora);
+    google.charts.setOnLoadCallback(dibujarDia);
 }
 
 var options = {
-    title: "No se cargo el titulo",
     height: 400,
     bar: {
         groupWidth: "95%"
@@ -129,6 +131,12 @@ var options = {
     legend: {
         position: "none"
     }
+};
+
+var options2 = {
+    title: 'Gafica de medias, en torno a la dia de la semana',
+    legend: { position: 'top', maxLines: 3 },
+    vAxis: { minValue: 0 }
 };
 
 function dibujarTemperatura() {
@@ -161,14 +169,19 @@ function dibujarCO() {
 function dibujarHora() {
     var data = google.visualization.arrayToDataTable(frec_h);
 
-    var options = {
-        title: 'Gafica de medias, en torno a la hora del dia',
-        legend: { position: 'top', maxLines: 3 },
-        hAxis: { title: 'Hora del dia', titleTextStyle: { color: '#333' } },
-        vAxis: { minValue: 0 }
-    };
+    options2['title'] = 'Gafica de medias, en torno a la hora del dia';
+    options2['hAxis'] = { title: 'Hora de la seman', titleTextStyle: { color: '#333' } };
     var chart = new google.visualization.AreaChart(document.getElementById('hora_f'));
-    chart.draw(data, options);
+    chart.draw(data, options2);
+}
+
+function dibujarDia() {
+    var data = google.visualization.arrayToDataTable(frec_d);
+
+    options2['title'] = 'Gafica de medias, en torno a la dia de la semana';
+    options2['hAxis'] = { title: 'Dia de la semana', titleTextStyle: { color: '#333' } };
+    var chart = new google.visualization.AreaChart(document.getElementById('dia_f'));
+    chart.draw(data, options2);
 }
 // #########################################################################
 // #########################################################################

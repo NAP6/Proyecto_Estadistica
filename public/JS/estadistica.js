@@ -36,10 +36,10 @@ function frecuencia(val) {
     return res;
 }
 
-function frecuenciaH() {
+function frecuenciaH(val, n) {
     let res = new Array();
     let s = "";
-    for (i = 0; i < 24; i++) {
+    for (i = 0; i < n; i++) {
         res[i] = new Array();
         res[i]['t'] = 0;
         res[i]['h'] = 0;
@@ -48,11 +48,12 @@ function frecuenciaH() {
         res[i]['div'] = 0;
     }
     for (i = 0; i < ArrNico.length; i++) {
-        res[ArrNico[i]['h']]['t'] += ArrNico[i]['temperatura'];
-        res[ArrNico[i]['h']]['h'] += ArrNico[i]['humedad'];
-        res[ArrNico[i]['h']]['c'] += ArrNico[i]['co'];
-        res[ArrNico[i]['h']]['sen'] += ArrNico[i]['Sensacio_Termica'];
-        res[ArrNico[i]['h']]['div']++;
+        console.log(val + ": " + ArrNico[i][val])
+        res[ArrNico[i][val]]['t'] += ArrNico[i]['temperatura'];
+        res[ArrNico[i][val]]['h'] += ArrNico[i]['humedad'];
+        res[ArrNico[i][val]]['c'] += ArrNico[i]['co'];
+        res[ArrNico[i][val]]['sen'] += ArrNico[i]['Sensacio_Termica'];
+        res[ArrNico[i][val]]['div']++;
     }
     let aux = [
         ['Hora', 'Temperatura', 'Humedad', 'CO', 'sensacion termica']
